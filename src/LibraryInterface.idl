@@ -1,0 +1,17 @@
+module CORBADLMS{
+    interface LibraryMethods{
+    string addUser(in string managerId,in string userId);
+    string addManager(in string managerId,in string newManagerId);
+    string addItem(in string managerId, in string itemId, in string itemName, in long quantity);
+    string removeItem(in string managerId, in string itemId, in long quantity);
+    string listItemAvailability(in string managerId);
+    boolean validate(in string managerId, in string clientType);
+    string borrowItem(in string userId, in string itemId, in long numberOfDays);
+	string findItem(in string userId, in string itemName);
+	string ReturnItem(in string userId, in string itemId);
+	string addToWaitlist(in string userId, in string itemId, in long numberOfDays);
+	string exchangeItem(in string userId,in string newItem,in string oldItem);
+	oneway void shutdown();
+
+};
+};

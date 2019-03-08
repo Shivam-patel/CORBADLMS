@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2019-03-08T15:48:27</date>
+  <millis>1552078107386</millis>
+  <sequence>0</sequence>
+  <logger>CORBADLMS.ClientDriver</logger>
+  <level>INFO</level>
+  <class>CORBADLMS.ClientDriver</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>Client is a manager</message>
+</record>
+</log>
