@@ -327,9 +327,9 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
         if (conLibrary.containsKey(itemId)) {
             DataModel value;
             value = conLibrary.get(itemId);
-            System.out.println(value.toString());
+        /*    System.out.println(value.toString());
             System.out.println(value.getItemId());
-            System.out.println(value.getItemName());
+            System.out.println(value.getItemName());*/
             int quantity = value.getQuantity();
             if (quantity != 0) {
                 quantity--;
@@ -349,7 +349,9 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
                     synchronized (lock) {
                         borrowed.setBorrowedBooks(itemId, numberOfDays);
                         itemsBorrowed.put(userId, borrowed);
+/*
                         System.out.println(userId+"   "+itemsBorrowed.keySet());
+*/
                     }
                 }
 
@@ -459,7 +461,9 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
         while (iter.hasNext()) {
             Map.Entry<String, DataModel> pair = iter.next();
             DataModel value = pair.getValue();
+/*
             System.out.println(count++);
+*/
             if (value.getItemName().equals(itemName)) {
                 reply = pair.getKey();
                 reply = reply.concat("\t");
@@ -574,7 +578,7 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
                 if(userId.startsWith("CON")){
                     for(DataModel tempUser : users){
                         if(tempUser.getUserId().startsWith(userId)){
-                            tempUser.setBooksMon(0);
+                            tempUser.setBooksMcg(0);
                         }
                     }
                 }
@@ -667,7 +671,9 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
                 } else if (itemId.startsWith("MON")) {
                     DatagramPacket req = new DatagramPacket(request, request.length, aHost, monPort);
                     aSocket.send(req);
+/*
                     System.out.println("request sent");
+*/
                     byte[] buffer1 = new byte[1000];
                     DatagramPacket rep = new DatagramPacket(buffer1, buffer1.length);
                     aSocket.receive(rep);
@@ -738,6 +744,9 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
     public String exchangeItem(String userId, String newItem, String oldItem) {
         String reply = "Success";
         DataModel user1 = null;
+/*
+        System.out.println("inside exchange");
+*/
         for(DataModel temp:users){
             if(temp.getUserId().equals(userId)){
                 user1 = temp;
@@ -771,7 +780,7 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
 
 
         } else {
-            reply = "You have not borrowed any books";
+            reply = "You have not borrowed the book";
 
         }
         return reply;
@@ -802,7 +811,12 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
                     aSocket.send(req);
                     byte[] buffer1 = new byte[1000];
                     DatagramPacket rep = new DatagramPacket(buffer1, buffer1.length);
+/*
+                    System.out.println("Here");
+*/
                     aSocket.receive(rep);
+/*                    System.out.println("Data received");
+                    aSocket.close();*/
                     return Integer.parseInt(new String(rep.getData()).trim());
                 } else if (itemId.startsWith("MON")) {
                     DatagramPacket req = new DatagramPacket(request, request.length, aHost, monPort);
@@ -811,6 +825,9 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
                     DatagramPacket rep = new DatagramPacket(buffer1, buffer1.length);
                     aSocket.receive(rep);
                     String replyString = new String(rep.getData());
+/*
+                    aSocket.close();
+*/
                     return Integer.parseInt(replyString.trim());
                 }
             } catch (UnknownHostException e) {

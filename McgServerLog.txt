@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2019-03-08T15:46:34</date>
-  <millis>1552077994947</millis>
+  <date>2019-03-08T23:26:27</date>
+  <millis>1552105587066</millis>
   <sequence>5</sequence>
   <logger>CORBADLMS.McgServer</logger>
   <level>INFO</level>
@@ -13,8 +13,8 @@
   <message>borrowItem</message>
 </record>
 <record>
-  <date>2019-03-08T15:46:34</date>
-  <millis>1552077994950</millis>
+  <date>2019-03-08T23:26:27</date>
+  <millis>1552105587066</millis>
   <sequence>6</sequence>
   <logger>CORBADLMS.McgServer</logger>
   <level>INFO</level>
@@ -24,8 +24,8 @@
   <message>CONU0001	MCG0001	1</message>
 </record>
 <record>
-  <date>2019-03-08T15:46:34</date>
-  <millis>1552077994952</millis>
+  <date>2019-03-08T23:26:27</date>
+  <millis>1552105587066</millis>
   <sequence>7</sequence>
   <logger>CORBADLMS.McgServer</logger>
   <level>INFO</level>

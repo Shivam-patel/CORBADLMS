@@ -108,15 +108,15 @@ public class McgServer extends LibraryMethodsPOA implements Runnable {
         DatagramSocket aSocket = new DatagramSocket(9987);
         byte[] buffer = new byte[1000];
         DatagramPacket request = new DatagramPacket(buffer,buffer.length);
-        System.out.println("mcgwait");
         aSocket.receive(request);
+        System.out.println("mcgwait");
         ObjectInputStream iStream ;
         iStream = new ObjectInputStream(new ByteArrayInputStream(request.getData()));
         DataModel pack = (DataModel) iStream.readObject();
         iStream.close();
         String reply;
         try {
-            if (pack.getUserId().equals("")) {
+            if (pack.getUserId().equals("")||pack.getDaysToBorrow()==0) {
                 int intReply = getItemAvailability(pack.getItemId());
                 byte[] response = Integer.toString(intReply).getBytes();
                 DatagramPacket re = new DatagramPacket(response, response.length, request.getAddress(), request.getPort());
@@ -129,6 +129,7 @@ public class McgServer extends LibraryMethodsPOA implements Runnable {
             }
         } catch (Exception e) {
             System.out.println("Exception in accessing the userId in getWaitRequest");
+
         }
     }
     /**This method adds a new user when called by a manager of corresponding server.
@@ -308,19 +309,19 @@ public class McgServer extends LibraryMethodsPOA implements Runnable {
 
         logger.info("borrowItem");
         logger.info(userId+"\t"+itemId+"\t"+numberOfDays);
-        /*if(itemsBorrowed.containsKey(userId)){
+        if(itemsBorrowed.containsKey(userId)){
             if(itemsBorrowed.get(userId).getBorrowedBooks().containsKey(itemId)){
                 reply = "Can not borrow the same book again.";
                 return reply;
             }
-        }*/
+        }
 
         if(mcgLibrary.containsKey(itemId)) {
             DataModel value;
             value = mcgLibrary.get(itemId);
-            System.out.println(value.toString());
+         /*   System.out.println(value.toString());
             System.out.println(value.getItemId());
-            System.out.println(value.getItemName());
+            System.out.println(value.getItemName());*/
             int quantity = value.getQuantity();
             if(quantity != 0) {
                 quantity--;
@@ -440,7 +441,9 @@ public class McgServer extends LibraryMethodsPOA implements Runnable {
             while(iter.hasNext()) {
                 Map.Entry<String,DataModel> pair = iter.next();
                 DataModel value = pair.getValue();
+/*
                 System.out.println(count++);
+*/
                 if(value.getItemName().equals(itemName)) {
                     reply = pair.getKey();
                     reply = reply.concat("\t");
@@ -549,7 +552,7 @@ public class McgServer extends LibraryMethodsPOA implements Runnable {
                 if(userId.startsWith("MCG")){
                     for(DataModel tempUser : users){
                         if(tempUser.getUserId().startsWith(userId)){
-                            tempUser.setBooksMon(0);
+                            tempUser.setBooksCon(0);
                         }
                     }
                 }
@@ -771,6 +774,9 @@ public class McgServer extends LibraryMethodsPOA implements Runnable {
                         DatagramPacket rep = new DatagramPacket(buffer1, buffer1.length);
                         aSocket.receive(rep);
                         String replyString = new String(rep.getData());
+/*
+                        aSocket.close();
+*/
                         return Integer.parseInt(replyString.trim());
                     } else if (itemId.startsWith("MON")) {
                         DatagramPacket req = new DatagramPacket(request, request.length, aHost, monPort);
@@ -779,6 +785,9 @@ public class McgServer extends LibraryMethodsPOA implements Runnable {
                         DatagramPacket rep = new DatagramPacket(buffer1, buffer1.length);
                         aSocket.receive(rep);
                         String replyString = new String(rep.getData());
+/*
+                        aSocket.close();
+*/
                         return Integer.parseInt(replyString.trim());
                     }
                 } catch (UnknownHostException e) {

@@ -12,7 +12,7 @@ import java.util.HashMap;
         private static final long serialVersionUID = 1L;
         private String userId;
         private String userName;
-        private Integer daysToBorrow;
+        private int daysToBorrow;
         private String itemName;
         private String itemId;
         private String ManagerId;
@@ -38,6 +38,7 @@ import java.util.HashMap;
             this.booksCon = 0;
             this.booksMon = 0;
             this.booksMcg = 0;
+            this.daysToBorrow=0;
 
 
         }

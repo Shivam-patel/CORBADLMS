@@ -320,9 +320,9 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
         if(monLibrary.containsKey(itemId)) {
             DataModel value;
             value = monLibrary.get(itemId);
-            System.out.println(value.toString());
+           /* System.out.println(value.toString());
             System.out.println(value.getItemId());
-            System.out.println(value.getItemName());
+            System.out.println(value.getItemName());*/
             int quantity = value.getQuantity();
             if(quantity != 0) {
                 quantity--;
@@ -338,7 +338,9 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
 
                         borrowed.setBorrowedBooks(itemId, numberOfDays);
                         itemsBorrowed.put(userId, borrowed);
+/*
                         System.out.println(userId+"   "+itemsBorrowed.keySet());
+*/
                     }
                 }
                 reply = "Success";
@@ -443,7 +445,9 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
             while (iter.hasNext()) {
                 Map.Entry<String, DataModel> pair = iter.next();
                 DataModel value = pair.getValue();
+/*
                 System.out.println(count++);
+*/
                 if (value.getItemName().equals(itemName)) {
                     reply = pair.getKey();
                     reply = reply.concat("\t");
@@ -533,7 +537,7 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
                 if(userId.startsWith("MON")){
                     for(DataModel tempUser : users){
                         if(tempUser.getUserId().startsWith(userId)){
-                            tempUser.setBooksMon(0);
+                            tempUser.setBooksCon(0);
                         }
                     }
                 }
@@ -551,7 +555,7 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
                 if(userId.startsWith("MON")){
                     for(DataModel tempUser : users){
                         if(tempUser.getUserId().startsWith(userId)){
-                            tempUser.setBooksMon(0);
+                            tempUser.setBooksMcg(0);
                         }
                     }
                 }
@@ -745,7 +749,7 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
 
 
         } else {
-            reply = "You have not borrowed any books";
+            reply = "You have not borrowed the book";
 
         }
         return reply;
@@ -773,14 +777,18 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
                     DatagramPacket rep = new DatagramPacket(buffer1, buffer1.length);
                     aSocket.receive(rep);
                     String replyString = new String(rep.getData());
+                   /* aSocket.close();*/
                     return Integer.parseInt(replyString.trim());
-                } else if (itemId.startsWith("MON")) {
+                } else if (itemId.startsWith("CON")) {
                     DatagramPacket req = new DatagramPacket(request, request.length, aHost, conPort);
                     aSocket.send(req);
                     byte[] buffer1 = new byte[1000];
                     DatagramPacket rep = new DatagramPacket(buffer1, buffer1.length);
                     aSocket.receive(rep);
                     String replyString = new String(rep.getData());
+/*
+                    aSocket.close();
+*/
                     return Integer.parseInt(replyString.trim());
                 }
             } catch (UnknownHostException e) {
