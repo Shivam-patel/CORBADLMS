@@ -742,6 +742,8 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
 
     @Override
     public String exchangeItem(String userId, String newItem, String oldItem) {
+        logger.info("exchangeItem");
+        logger.info(userId+" "+newItem+" "+oldItem);
         String reply = "Success";
         DataModel user1 = null;
 /*
@@ -768,13 +770,20 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
                         reply = borrowItem(userId, newItem, 5);
                         if(!reply.startsWith("Succ")){
                             reply = borrowItem(userId,oldItem,5);
+                            logger.info(reply);
                             return reply;
                         }
                     }else{
+                        logger.info(reply);
+
                         reply = "Exception in returning the item";
                     }
+                    logger.info(reply);
+
                     return reply;
                 } catch (IOException e) {
+                    logger.info(e.toString());
+
                     return e.toString();
                 }
 
@@ -783,15 +792,19 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
             reply = "You have not borrowed the book";
 
         }
+        logger.info(reply);
+
         return reply;
     }
 
     @Override
     public void shutdown() {
-
+        orb.shutdown(false);
     }
 
     public int getItemAvailability(String itemId) {
+        logger.info("getItemAvailability");
+        logger.info(itemId);
         if (conLibrary.containsKey(itemId)) {
             return conLibrary.get(itemId).getQuantity();
         } else {
@@ -817,6 +830,8 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
                     aSocket.receive(rep);
 /*                    System.out.println("Data received");
                     aSocket.close();*/
+                    logger.info(new String(rep.getData()).trim());
+
                     return Integer.parseInt(new String(rep.getData()).trim());
                 } else if (itemId.startsWith("MON")) {
                     DatagramPacket req = new DatagramPacket(request, request.length, aHost, monPort);
@@ -827,10 +842,11 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
                     String replyString = new String(rep.getData());
 /*
                     aSocket.close();
-*/
+*/                  logger.info(replyString.trim());
                     return Integer.parseInt(replyString.trim());
                 }
             } catch (UnknownHostException e) {
+
                 e.printStackTrace();
                 return -1;
             } catch (SocketException e) {

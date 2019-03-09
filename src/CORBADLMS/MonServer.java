@@ -714,6 +714,8 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
 
     @Override
     public String exchangeItem(String userId, String newItem, String oldItem) {
+        logger.info("Exchange Item");
+        logger.info(userId+" "+newItem+" "+oldItem);
        String reply;
        DataModel user1=null;
         for(DataModel temp:users){
@@ -727,8 +729,11 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
 
                 int avail = getItemAvailability(newItem);
                 if(avail==-1){
+                    logger.info("exception" + avail);
+
                     return "Some exception in getting the availability";
                 }else if(avail==0){
+                    logger.info("avail: "+avail);
                     return "The newitem is not available";
                 }
                 try {
@@ -737,11 +742,14 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
                         reply = borrowItem(userId, newItem, 5);
                         if(!reply.startsWith("Succ")){
                             reply = borrowItem(userId,oldItem,5);
+                            logger.info(reply);
                             return reply;
                         }
                     }else{
+                        logger.info(reply);
                         reply = "Exception in returning the item";
                     }
+                    logger.info(reply);
                     return reply;
                 } catch (IOException e) {
                     return e.toString();
@@ -752,9 +760,12 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
             reply = "You have not borrowed the book";
 
         }
+        logger.info(reply);
         return reply;
     }
     public int getItemAvailability(String itemId){
+        logger.info("getItemAvailability");
+        logger.info(itemId);
         if(monLibrary.containsKey(itemId)){
             return monLibrary.get(itemId).getQuantity();
         }
@@ -778,6 +789,7 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
                     aSocket.receive(rep);
                     String replyString = new String(rep.getData());
                    /* aSocket.close();*/
+                    logger.info(replyString.trim());
                     return Integer.parseInt(replyString.trim());
                 } else if (itemId.startsWith("CON")) {
                     DatagramPacket req = new DatagramPacket(request, request.length, aHost, conPort);
@@ -788,7 +800,7 @@ public class MonServer extends LibraryMethodsPOA implements Runnable{
                     String replyString = new String(rep.getData());
 /*
                     aSocket.close();
-*/
+*/                  logger.info(replyString.trim());
                     return Integer.parseInt(replyString.trim());
                 }
             } catch (UnknownHostException e) {

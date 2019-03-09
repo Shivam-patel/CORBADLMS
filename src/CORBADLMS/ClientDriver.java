@@ -233,6 +233,8 @@ public class ClientDriver implements Runnable {
 					System.out.println("Enter New itemId and Old itemId");
 					String newItem = in.next();
 					String oldItem = in.next();
+					logger.info("return item");
+					logger.info(userId+" "+newItem+" "+oldItem);
 					reply = userInt.exchangeItem(userId,newItem,oldItem);
 					break;
 				case 5:
