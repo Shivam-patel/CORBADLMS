@@ -29,31 +29,45 @@ public class InterServComServer implements  Runnable{
     ORB orb;
     org.omg.CORBA.Object objRef;
     NamingContextExt ncRef;
-    LibraryMethods mcgUser ;
+   /* LibraryMethods mcgUser ;
     LibraryMethods conUser ;
-    LibraryMethods monUser ;
+    LibraryMethods monUser ;*/
     DatagramSocket activeSocket = null;
+    McgServer mcgUser;
+    MonServer monUser;
+    ConServer conUser;
 
 
-
-        public InterServComServer(int flag,String[] args) {
+    public InterServComServer(int flag,String[] args,McgServer mcg){
+        this.mcgUser=mcg;
+        this.setInterServComServer(flag,args);
+    }
+    public InterServComServer(int flag,String[] args,MonServer mon){
+        this.monUser=mon;
+        this.setInterServComServer(flag,args);
+    }
+    public InterServComServer(int flag,String[] args,ConServer con){
+        this.conUser=con;
+        this.setInterServComServer(flag,args);
+    }
+        public void setInterServComServer(int flag,String[] args) {
          try {
-            orb = ORB.init(args,null);
+          /*  orb = ORB.init(args,null);
              objRef = orb.resolve_initial_references("NameService");
-             ncRef = NamingContextExtHelper.narrow(objRef);
+             ncRef = NamingContextExtHelper.narrow(objRef);*/
 
 
-             if(flag == 1 || flag == 4 || flag == 7){
+             if(flag == 1 || flag == 4 || flag == 7||flag == 10||flag == 13){
                  activeSocket = new DatagramSocket(MCG);
                  System.out.println("mcg active");
              }
-             else if(flag == 2 || flag == 5 || flag == 8) {
-                 activeSocket = new DatagramSocket(CON);
-                 System.out.println("con active");
-             }
-             else {
+             else if(flag == 2 || flag == 5 || flag == 8||flag == 11||flag == 14) {
                  activeSocket = new DatagramSocket(MON);
                  System.out.println("mon active");
+             }
+             else {
+                 activeSocket = new DatagramSocket(CON);
+                 System.out.println("con active");
              }
             }catch(Exception e){
                 e.printStackTrace();
@@ -75,13 +89,14 @@ public class InterServComServer implements  Runnable{
                     DataModel pack = (DataModel) iStream.readObject();
                     iStream.close();
                     int op = pack.getFlag();
-                    mcgUser = LibraryMethodsHelper.narrow(ncRef.resolve_str("MCG"));
+                   /* mcgUser = LibraryMethodsHelper.narrow(ncRef.resolve_str("MCG"));
                     monUser = LibraryMethodsHelper.narrow(ncRef.resolve_str("MON"));
-                    conUser = LibraryMethodsHelper.narrow(ncRef.resolve_str("CON"));
+                    conUser = LibraryMethodsHelper.narrow(ncRef.resolve_str("CON"));*/
                     String reply = "";
+                    System.out.println("I was here");
                     switch (op) {
                         case 1:
-                            System.out.println("I was here");
+                            System.out.println(mcgUser);
                             reply = mcgUser.borrowItem(pack.getUserId(),pack.getItemId(),pack.getDaysToBorrow());
                             break;
                         case 4:
@@ -90,7 +105,14 @@ public class InterServComServer implements  Runnable{
                         case 7:
                             reply = mcgUser.returnItem(pack.getUserId(),pack.getItemId());
                             break;
+                        case 10:
+                            reply = mcgUser.getItemAvailability(pack.getItemId());
+                            break;
+                        case 13: //Here the itemname contains the id of old book and ItemId contains id of new book.
+                            reply = mcgUser.exchangeItem(pack.getUserId(),pack.getItemId(),pack.getItemName());
+                            break;
                         case 2:
+                            System.out.println(monUser);
                             reply = monUser.borrowItem(pack.getUserId(),pack.getItemId(),pack.getDaysToBorrow());
                             break;
                         case 5:
@@ -100,7 +122,14 @@ public class InterServComServer implements  Runnable{
 
                             reply = monUser.returnItem(pack.getUserId(),pack.getItemId());
                             break;
-                        case 3:
+                        case 11:
+                            reply = monUser.getItemAvailability(pack.getItemId());
+                            break;
+                        case 14: //Here the itemname contains the id of old book and ItemId contains id of new book.
+                            reply = monUser.exchangeItem(pack.getUserId(),pack.getItemId(),pack.getItemName());
+                            break;
+                            case 3:
+                            System.out.println(conUser);
                             reply = conUser.borrowItem(pack.getUserId(),pack.getItemId(),pack.getDaysToBorrow());
                             break;
                         case 6:
@@ -109,6 +138,12 @@ public class InterServComServer implements  Runnable{
                             break;
                         case 9:
                             reply = conUser.returnItem(pack.getUserId(),pack.getItemId());
+                            break;
+                        case 12:
+                            reply = conUser.getItemAvailability(pack.getItemId());
+                            break;
+                        case 15: //Here the itemname contains the id of old book and ItemId contains id of new book.
+                            reply = conUser.exchangeItem(pack.getUserId(),pack.getItemId(),pack.getItemName());
                             break;
 
 
@@ -125,12 +160,6 @@ public class InterServComServer implements  Runnable{
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
-                } catch (CannotProceed cannotProceed) {
-                    cannotProceed.printStackTrace();
-                } catch (InvalidName invalidName) {
-                    invalidName.printStackTrace();
-                } catch (NotFound notFound) {
-                    notFound.printStackTrace();
                 }
         }
     }

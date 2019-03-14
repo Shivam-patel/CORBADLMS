@@ -118,7 +118,7 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
         String reply;
         try {
             if (pack.getUserId().equals("")) {
-                int intReply = getItemAvailability(pack.getItemId());
+                int intReply = Integer.parseInt(getItemAvailability(pack.getItemId()));
                 byte[] response = Integer.toString(intReply).getBytes();
                 DatagramPacket re = new DatagramPacket(response, response.length, request.getAddress(), request.getPort());
                 aSocket.send(re);
@@ -758,10 +758,10 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
         if (itemsBorrowed.containsKey(userId) || removedItems.contains(oldItem)||user1.getBorrowedBooks().containsKey(oldItem)) {
             DataModel user = user1;
 
-                int avail = getItemAvailability(newItem);
-                if(avail==-1){
+                String avail = (this.getItemAvailability(newItem));
+                if(avail.startsWith("-1")){
                     return "Some exception in getting the availability";
-                }else if(avail==0){
+                }else if(avail.startsWith("0")){
                     return "The newitem is not available";
                 }
                 try {
@@ -802,61 +802,39 @@ public class ConServer extends LibraryMethodsPOA implements Runnable {
         orb.shutdown(false);
     }
 
-    public int getItemAvailability(String itemId) {
+    public String getItemAvailability(String itemId) {
         logger.info("getItemAvailability");
         logger.info(itemId);
         if (conLibrary.containsKey(itemId)) {
-            return conLibrary.get(itemId).getQuantity();
+            return conLibrary.get(itemId).getQuantity().toString();
         } else {
             try {
-                int monPort = 9986;
-                int mcgPort = 9987;
-                DatagramSocket aSocket = new DatagramSocket();
                 DataModel pack = new DataModel();
                 pack.setItemId(itemId);
-                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-                ObjectOutput oo = new ObjectOutputStream(bStream);
-                oo.writeObject(pack);
-                byte[] request = bStream.toByteArray();
-                InetAddress aHost = InetAddress.getLocalHost();
+                String replyString;
                 if (itemId.startsWith("MCG")) {
-                    DatagramPacket req = new DatagramPacket(request, request.length, aHost, mcgPort);
-                    aSocket.send(req);
-                    byte[] buffer1 = new byte[1000];
-                    DatagramPacket rep = new DatagramPacket(buffer1, buffer1.length);
-/*
-                    System.out.println("Here");
-*/
-                    aSocket.receive(rep);
-/*                    System.out.println("Data received");
-                    aSocket.close();*/
-                    logger.info(new String(rep.getData()).trim());
-
-                    return Integer.parseInt(new String(rep.getData()).trim());
+                    InterServComClient temp = new InterServComClient(MCG,10);
+                    replyString=temp.operate(pack);
+                    logger.info(replyString);
+                    return replyString;
                 } else if (itemId.startsWith("MON")) {
-                    DatagramPacket req = new DatagramPacket(request, request.length, aHost, monPort);
-                    aSocket.send(req);
-                    byte[] buffer1 = new byte[1000];
-                    DatagramPacket rep = new DatagramPacket(buffer1, buffer1.length);
-                    aSocket.receive(rep);
-                    String replyString = new String(rep.getData());
-/*
-                    aSocket.close();
-*/                  logger.info(replyString.trim());
-                    return Integer.parseInt(replyString.trim());
+                    InterServComClient temp = new InterServComClient(MON,11);
+                    replyString=temp.operate(pack);
+                    logger.info(replyString);
+                    return replyString;
                 }
             } catch (UnknownHostException e) {
 
                 e.printStackTrace();
-                return -1;
+                return "-1";
             } catch (SocketException e) {
                 e.printStackTrace();
-                return -1;
+                return "-1";
             } catch (IOException e) {
                 e.printStackTrace();
-                return -1;
+                return "-1";
             }
-            return -1;
+            return "-1";
         }
     }
 }

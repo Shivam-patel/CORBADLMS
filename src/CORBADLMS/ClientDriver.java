@@ -116,8 +116,6 @@ public class ClientDriver implements Runnable {
 		System.out.println(libCode);
 		String reply = null;
 		try {
-			
-
 			switch (op) {
 				case 1:
 
